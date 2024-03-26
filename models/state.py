@@ -10,21 +10,3 @@ class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
-
-    def __init__(self, *args, **kwargs):
-        """ Initializes State """
-        super().__init__(*args, **kwargs)
-
-    @property
-    def cities_list(self):
-        """ Getter attribute cities that returns a list of City instances
-            with state_id equals to the current State.id """
-        from models import storage
-        cities_list = []
-        for city in storage.all(City).values():
-            if city.state_id == self.id:
-                cities_list.append(city)
-        return cities_list
-
-    cities = relationship("City", cascade="all, delete-orphan",
-                          backref="state")
