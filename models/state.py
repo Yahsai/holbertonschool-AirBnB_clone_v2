@@ -18,7 +18,7 @@ class State(BaseModel, Base):
         super().__init__(*args, **kwargs)
 
     @property
-    def cities(self):
+    def cities_list(self):
         """ Getter attribute cities that returns a list of City instances
             with state_id equals to the current State.id """
         from models import storage
