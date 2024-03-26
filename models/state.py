@@ -10,8 +10,6 @@ class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
-    cities = relationship("City", cascade="all, delete-orphan",
-                          backref="state")
 
     def __init__(self, *args, **kwargs):
         """ Initializes State """
@@ -27,3 +25,6 @@ class State(BaseModel, Base):
             if city.state_id == self.id:
                 cities_list.append(city)
         return cities_list
+
+    cities = relationship("City", cascade="all, delete-orphan",
+                          backref="state")
