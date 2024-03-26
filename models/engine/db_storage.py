@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship, backref
 from models.base_model import Base
 from models.state import State
 from models.city import City
+from os import getenv
 
 
 class DBStorage:
@@ -14,8 +15,14 @@ class DBStorage:
 
     def __init__(self):
         """Constructor"""
-        self.__engine = create_engine('mysql+mysqldb://HBNB_MYSQL_USER:HBNB_MYSQL_PWD@HBNB_MYSQL_HOST/HBNB_MYSQL_DB',
+        self.__engine = create_engine("mysql+pymysql://{}:{}@{}/{}".
+                                      format(getenv("HBNB_MYSQL_USER"),
+                                             getenv("HBNB_MYSQL_PWD"),
+                                             getenv("HBNB_MYSQL_HOST"),
+                                             getenv("HBNB_MYSQL_DB")),
                                       pool_pre_ping=True)
+        if getenv("HBNB_ENV") == "test":
+            Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """Query all objects"""
