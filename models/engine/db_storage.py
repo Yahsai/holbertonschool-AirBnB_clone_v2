@@ -26,21 +26,18 @@ class DBStorage:
 
     def all(self, cls=None):
         """Query all objects"""
-        objects = {}
-        if cls:
-            query = self.__session.query(cls).all()
-            for obj in query:
-                key = "{}.{}".format(type(obj).__name__, obj.id)
-                objects[key] = obj
+        if cls is None:
+            objs = self.__session.query(State).all()
+            objs.extend(self.__session.query(City).all())
+            objs.extend(self.__session.query(User).all())
+            objs.extend(self.__session.query(Place).all())
+            objs.extend(self.__session.query(Review).all())
+            objs.extend(self.__session.query(Amenity).all())
         else:
-            for table in Base.metadata.tables.keys():
-                if table != 'states' and table != 'cities':
-                    continue
-                query = self.__session.query(eval(table.capitalize())).all()
-                for obj in query:
-                    key = "{}.{}".format(type(obj).__name__, obj.id)
-                    objects[key] = obj
-        return objects
+            if type(cls) is str:
+                cls = eval(cls)
+            objs = self.__session.query(cls)
+        return {"{}.{}".format(type(o).__name__, o.id): o for o in objs}
 
     def new(self, obj):
         """Add the object to the current database session"""
@@ -67,9 +64,9 @@ class DBStorage:
         """Call remove() method on the private session attribute"""
         self.__session.remove()
 
-    def get_cities(self, state_id):
-        """Get cities by state_id"""
+    """def get_cities(self, state_id):
+        ""Get cities by state_id""
         state = self.__session.query(State).filter(State.id == state_id).first()
         if state:
             return state.cities
-        return []
+        return []""" 
