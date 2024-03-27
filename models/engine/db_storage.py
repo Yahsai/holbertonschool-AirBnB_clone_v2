@@ -3,8 +3,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm import relationship, backref
 from models.base_model import Base
-from models.state import State
+from models.base_model import BaseModel
+from models.amenity import Amenity
 from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 from os import getenv
 
 
@@ -63,10 +68,3 @@ class DBStorage:
     def close(self):
         """Call remove() method on the private session attribute"""
         self.__session.remove()
-
-    """def get_cities(self, state_id):
-        ""Get cities by state_id""
-        state = self.__session.query(State).filter(State.id == state_id).first()
-        if state:
-            return state.cities
-        return []""" 
