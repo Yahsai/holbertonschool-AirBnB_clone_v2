@@ -10,11 +10,12 @@ Base = declarative_base()
 
 class State(BaseModel, Base):
     """ State class """
-    __tablename__  = "states"
+    __tablename__ = "states"
     name = Column(String(128), nullable=False)
 
     # Relación para DBStorage
-    cities = relationship("City", cascade="all, delete-orphan", backref="state")
+    cities = relationship("City", cascade="all, delete-orphan",
+                          backref="state")
 
     # Getter para FileStorage
     @property
