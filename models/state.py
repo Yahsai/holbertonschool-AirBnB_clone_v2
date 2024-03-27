@@ -2,6 +2,7 @@
 """ State Module for HBNB project """
 
 from models.base_model import BaseModel
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String
 Base = declarative_base()
