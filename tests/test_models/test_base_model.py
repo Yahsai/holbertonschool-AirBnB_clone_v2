@@ -1,99 +1,35 @@
 #!/usr/bin/python3
 """ """
-from models.base_model import BaseModel
 import unittest
-import datetime
-from uuid import UUID
-import json
-import os
+import MySQLdb
 
-
-class test_basemodel(unittest.TestCase):
-    """ """
-
-    def __init__(self, *args, **kwargs):
-        """ """
-        super().__init__(*args, **kwargs)
-        self.name = 'BaseModel'
-        self.value = BaseModel
-
+class TestMySQLState(unittest.TestCase):
     def setUp(self):
-        """ """
-        pass
+        # Establecer la conexión con la base de datos de prueba
+        self.db = MySQLdb.connect(host="HBNB_MYSQL_HOST",
+                                  user="HBNB_MYSQL_USER",
+                                  passwd="HBNB_MYSQL_PWD",
+                                  db="HBNB_MYSQL_DB")
+        self.cursor = self.db.cursor()
 
     def tearDown(self):
-        try:
-            os.remove('file.json')
-        except FileNotFoundError:
-            pass
+        # Cerrar la conexión con la base de datos
+        self.db.close()
 
-    def test_default(self):
-        """ """
-        i = self.value()
-        self.assertEqual(type(i), self.value)
+    def test_create_state(self):
+        # Obtener el número de registros actual en la tabla states
+        self.cursor.execute("SELECT COUNT(*) FROM states")
+        initial_count = self.cursor.fetchone()[0]
 
-    def test_kwargs(self):
-        """ """
-        i = self.value()
-        copy = i.to_dict()
-        new = BaseModel(**copy)
-        self.assertFalse(new is i)
+        # Ejecutar el comando de consola para crear un nuevo estado "California"
+        # Por ejemplo, podrías ejecutar un comando INSERT INTO aquí
 
-    def test_kwargs_int(self):
-        """ """
-        i = self.value()
-        copy = i.to_dict()
-        copy.update({1: 2})
-        with self.assertRaises(TypeError):
-            new = BaseModel(**copy)
+        # Obtener el número de registros nuevamente después de ejecutar el comando
+        self.cursor.execute("SELECT COUNT(*) FROM states")
+        final_count = self.cursor.fetchone()[0]
 
-    def test_save(self):
-        """ Testing save """
-        i = self.value()
-        i.save()
-        key = self.name + "." + i.id
-        with open('file.json', 'r') as f:
-            j = json.load(f)
-            self.assertEqual(j[key], i.to_dict())
+        # Verificar si se agregó un nuevo registro
+        self.assertEqual(final_count - initial_count, 1)
 
-    def test_str(self):
-        """ """
-        i = self.value()
-        self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
-                         i.__dict__))
-
-    def test_todict(self):
-        """ """
-        i = self.value()
-        n = i.to_dict()
-        self.assertEqual(i.to_dict(), n)
-
-    def test_kwargs_none(self):
-        """ """
-        n = {None: None}
-        with self.assertRaises(TypeError):
-            new = self.value(**n)
-
-    def test_kwargs_one(self):
-        """ """
-        n = {'Name': 'test'}
-        with self.assertRaises(KeyError):
-            new = self.value(**n)
-
-    def test_id(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.id), str)
-
-    def test_created_at(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.created_at), datetime.datetime)
-
-    def test_updated_at(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.updated_at), datetime.datetime)
-        n = new.to_dict()
-        new = BaseModel(**n)
-        self.assertFalse(new.created_at == new.updated_at)
+if __name__ == '__main__':
+    unittest.main()

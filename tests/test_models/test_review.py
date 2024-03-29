@@ -1,29 +1,40 @@
-#!/usr/bin/python3
-""" """
-from tests.test_models.test_base_model import test_basemodel
+import unittest
+from unittest.mock import patch
+import sys
+import io
+import MySQLdb
 from models.review import Review
 
+class TestMySQLReview(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.db = MySQLdb.connect(host="HBNB_MYSQL_HOST",
+                                  user="HBNB_MYSQL_USER",
+                                  passwd="HBNB_MYSQL_PWD",
+                                  db="HBNB_MYSQL_DB")
 
-class test_review(test_basemodel):
-    """ """
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
 
-    def __init__(self, *args, **kwargs):
-        """ """
-        super().__init__(*args, **kwargs)
-        self.name = "Review"
-        self.value = Review
+    def setUp(self):
+        self.review = Review(text="TestReviewText",
+                             place_id="TestPlaceID",
+                             user_id="TestUserID")
+        self.output = io.StringIO()
+        sys.stdout = self.output
 
-    def test_place_id(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.place_id), str)
+    def tearDown(self):
+        sys.stdout = sys.__stdout__
 
-    def test_user_id(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.user_id), str)
+    def test_save_review(self):
+        with patch('sys.stdin', io.StringIO('')):
+            self.review.save()
 
-    def test_text(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.text), str)
+        cursor = self.db.cursor()
+        cursor.execute("SELECT COUNT(*) FROM reviews WHERE text='TestReviewText'")
+        count = cursor.fetchone()[0]
+        self.assertEqual(count, 1)
+
+if __name__ == '__main__':
+    unittest.main()

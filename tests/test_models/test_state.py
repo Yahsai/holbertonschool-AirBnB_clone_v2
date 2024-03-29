@@ -8,10 +8,10 @@ import MySQLdb
 class TestStateCreation(unittest.TestCase):
     def setUp(self):
         # Establecer la conexión con la base de datos de prueba
-        self.db = MySQLdb.connect(host="localhost",
-                                  user="your_mysql_user",
-                                  passwd="your_mysql_password",
-                                  db="your_test_database")
+        self.db = MySQLdb.connect(host="HBNB_MYSQL_HOST",
+                                  user="HBNB_MYSQL_USER",
+                                  passwd="HBNB_MYSQL_PWD",
+                                  db="HBNB_MYSQL_DB")
         self.cursor = self.db.cursor()
 
     def tearDown(self):
