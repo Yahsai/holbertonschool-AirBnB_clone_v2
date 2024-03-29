@@ -6,6 +6,7 @@ from models.city import City
 from models.base_model import BaseModel
 from os import getenv
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 
 class TestState(unittest.TestCase):
