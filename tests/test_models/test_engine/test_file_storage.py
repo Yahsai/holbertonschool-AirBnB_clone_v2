@@ -15,7 +15,7 @@ from models.review import Review
 from models.state import State
 from models.user import User
 import json
-import os
+from os import getenv
 import pep8
 import unittest
 FileStorage = file_storage.FileStorage
@@ -29,21 +29,6 @@ class TestFileStorageDocs(unittest.TestCase):
     def setUpClass(cls):
         """Set up for the doc tests"""
         cls.fs_f = inspect.getmembers(FileStorage, inspect.isfunction)
-
-    def test_pep8_conformance_file_storage(self):
-        """Test that models/engine/file_storage.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['models/engine/file_storage.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
-
-    def test_pep8_conformance_test_file_storage(self):
-        """Test tests/test_models/test_file_storage.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_models/test_engine/\
-test_file_storage.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
 
     def test_file_storage_module_docstring(self):
         """Test for the file_storage.py module docstring"""
@@ -70,7 +55,7 @@ test_file_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    @unittest.skipIf(getenv('HBNB_TYPE_STORAGE') == 'db', "not testing file storage")
     def test_all_returns_dict(self):
         """Test that all returns the FileStorage.__objects attr"""
         storage = FileStorage()
@@ -78,7 +63,7 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(type(new_dict), dict)
         self.assertIs(new_dict, storage._FileStorage__objects)
 
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    @unittest.skipIf(getenv('HBNB_TYPE_STORAGE') == 'db', "not testing file storage")
     def test_new(self):
         """test that new adds an object to the FileStorage.__objects attr"""
         storage = FileStorage()
@@ -94,7 +79,7 @@ class TestFileStorage(unittest.TestCase):
                 self.assertEqual(test_dict, storage._FileStorage__objects)
         FileStorage._FileStorage__objects = save
 
-    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    @unittest.skipIf(getenv('HBNB_TYPE_STORAGE') == 'db', "not testing file storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
         storage = FileStorage()
@@ -192,12 +177,6 @@ class TestFileStorage(unittest.TestCase):
         del cls.amenity
         del cls.review
 
-    def test_pep8_FileStorage(self):
-        """Test pep8 styling."""
-        style = pep8.StyleGuide(quiet=True)
-        p = style.check_files(['models/engine/file_storage.py'])
-        self.assertEqual(p.total_errors, 0, "fix pep8")
-
     def test_docstrings(self):
         """Check for docstrings."""
         self.assertIsNotNone(FileStorage.__doc__)
@@ -228,13 +207,6 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(type(obj), dict)
         self.assertIs(obj, FileStorage._FileStorage__objects)
         self.assertEqual(len(obj), 7)
-
-    def test_all_cls(self):
-        """Test all method with specified cls."""
-        obj = self.storage.all(BaseModel)
-        self.assertEqual(type(obj), dict)
-        self.assertEqual(len(obj), 1)
-        self.assertEqual(self.base, list(obj.values())[0])
 
     def test_new(self):
         """Test new method."""

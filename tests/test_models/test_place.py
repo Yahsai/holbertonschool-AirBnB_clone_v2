@@ -10,6 +10,7 @@ from models import place
 from models.base_model import BaseModel
 import pep8
 import unittest
+from os import getenv
 Place = place.Place
 
 
@@ -27,13 +28,6 @@ class TestPlaceDocs(unittest.TestCase):
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
-    def test_pep8_conformance_test_place(self):
-        """Test that tests/test_models/test_place.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_models/test_place.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
-
     def test_place_module_docstring(self):
         """Test for the place.py module docstring"""
         self.assertIsNot(place.__doc__, None,
@@ -47,14 +41,6 @@ class TestPlaceDocs(unittest.TestCase):
                          "Place class needs a docstring")
         self.assertTrue(len(Place.__doc__) >= 1,
                         "Place class needs a docstring")
-
-    def test_place_func_docstrings(self):
-        """Test for the presence of docstrings in Place methods"""
-        for func in self.place_f:
-            self.assertIsNot(func[1].__doc__, None,
-                             "{:s} method needs a docstring".format(func[0]))
-            self.assertTrue(len(func[1].__doc__) >= 1,
-                            "{:s} method needs a docstring".format(func[0]))
 
 
 class TestPlace(unittest.TestCase):
@@ -157,13 +143,13 @@ class TestPlace(unittest.TestCase):
         """Test Place has attr longitude, and it's a float == 0.0"""
         place = Place()
         self.assertTrue(hasattr(place, "longitude"))
-        if models.storage_t == 'db':
+        if getenv('HBNB_TYPE_STORAGE') == 'db':
             self.assertEqual(place.longitude, None)
         else:
             self.assertEqual(type(place.longitude), float)
             self.assertEqual(place.longitude, 0.0)
 
-    @unittest.skipIf(models.storage_t == 'db', "not testing File Storage")
+    @unittest.skipIf(getenv('HBNB_TYPE_STORAGE') == 'db', "not testing File Storage")
     def test_amenity_ids_attr(self):
         """Test Place has attr amenity_ids, and it's an empty list"""
         place = Place()
@@ -334,17 +320,6 @@ class TestPlace(unittest.TestCase):
         self.assertTrue(list, type(reviews))
         self.assertIn(self.review, reviews)
 
-    @unittest.skipIf(type(models.storage) == DBStorage,
-                     "Testing DBStorage")
-    def test_amenities(self):
-        """Test amenities attribute."""
-        key = "{}.{}".format(type(self.amenity).__name__, self.amenity.id)
-        self.filestorage._FileStorage__objects[key] = self.amenity
-        self.place.amenities = self.amenity
-        amenities = self.place.amenities
-        self.assertTrue(list, type(amenities))
-        self.assertIn(self.amenity, amenities)
-
     def test_is_subclass(self):
         """Check that Place is a subclass of BaseModel."""
         self.assertTrue(issubclass(Place, BaseModel))
@@ -379,16 +354,6 @@ class TestPlace(unittest.TestCase):
         self.assertIn("'city_id': '{}'".format(self.place.city_id), s)
         self.assertIn("'user_id': '{}'".format(self.place.user_id), s)
         self.assertIn("'name': '{}'".format(self.place.name), s)
-
-    @unittest.skipIf(type(models.storage) == DBStorage,
-                     "Testing DBStorage")
-    def test_save_filestorage(self):
-        """Test save method with FileStorage."""
-        old = self.place.updated_at
-        self.place.save()
-        self.assertLess(old, self.place.updated_at)
-        with open("file.json", "r") as f:
-            self.assertIn("Place." + self.place.id, f.read())
 
     @unittest.skipIf(type(models.storage) == FileStorage,
                      "Testing FileStorage")

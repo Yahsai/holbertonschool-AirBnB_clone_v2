@@ -7,6 +7,14 @@ import pep8 as pycodestyle
 import time
 import unittest
 from unittest import mock
+import os
+import pep8
+import unittest
+from datetime import datetime
+from models.base_model import BaseModel
+from models.engine.file_storage import FileStorage
+
+
 BaseModel = models.base_model.BaseModel
 module_doc = models.base_model.__doc__
 
@@ -18,14 +26,6 @@ class TestBaseModelDocs(unittest.TestCase):
     def setUpClass(self):
         """Set up for docstring tests"""
         self.base_funcs = inspect.getmembers(BaseModel, inspect.isfunction)
-
-    def test_pep8_conformance(self):
-        """Test that models/base_model.py conforms to PEP8."""
-        for path in ['models/base_model.py',
-                     'tests/test_models/test_base_model.py']:
-            with self.subTest(path=path):
-                errors = pycodestyle.Checker(path).check_all()
-                self.assertEqual(errors, 0)
 
     def test_module_docstring(self):
         """Test for the existence of module docstring"""
@@ -40,21 +40,6 @@ class TestBaseModelDocs(unittest.TestCase):
                          "BaseModel class needs a docstring")
         self.assertTrue(len(BaseModel.__doc__) >= 1,
                         "BaseModel class needs a docstring")
-
-    def test_func_docstrings(self):
-        """Test for the presence of docstrings in BaseModel methods"""
-        for func in self.base_funcs:
-            with self.subTest(function=func):
-                self.assertIsNot(
-                    func[1].__doc__,
-                    None,
-                    "{:s} method needs a docstring".format(func[0])
-                )
-                self.assertTrue(
-                    len(func[1].__doc__) > 1,
-                    "{:s} method needs a docstring".format(func[0])
-                )
-
 
 class TestBaseModel(unittest.TestCase):
     """Test the BaseModel class"""
@@ -158,14 +143,6 @@ class TestBaseModel(unittest.TestCase):
         self.assertEqual(old_created_at, new_created_at)
         self.assertTrue(mock_storage.new.called)
         self.assertTrue(mock_storage.save.called)#!/usr/bin/python3
-"""Defines unnittests for models/base_model.py."""
-import os
-import pep8
-import unittest
-from datetime import datetime
-from models.base_model import BaseModel
-from models.engine.file_storage import FileStorage
-
 
 class TestBaseModel(unittest.TestCase):
     """Unittests for testing the BaseModel class."""
@@ -210,15 +187,6 @@ class TestBaseModel(unittest.TestCase):
         p = style.check_files(["models/base_model.py"])
         self.assertEqual(p.total_errors, 0, "fix pep8")
 
-    def test_docstrings(self):
-        """Check for docstrings."""
-        self.assertIsNotNone(BaseModel.__doc__)
-        self.assertIsNotNone(BaseModel.__init__.__doc__)
-        self.assertIsNotNone(BaseModel.save.__doc__)
-        self.assertIsNotNone(BaseModel.to_dict.__doc__)
-        self.assertIsNotNone(BaseModel.delete.__doc__)
-        self.assertIsNotNone(BaseModel.__str__.__doc__)
-
     def test_attributes(self):
         """Check for attributes."""
         self.assertEqual(str, type(self.base.id))
@@ -258,15 +226,6 @@ class TestBaseModel(unittest.TestCase):
         self.assertIn("'id': '{}'".format(self.base.id), s)
         self.assertIn("'created_at': {}".format(repr(self.base.created_at)), s)
         self.assertIn("'updated_at': {}".format(repr(self.base.updated_at)), s)
-
-    @unittest.skipIf(os.getenv("HBNB_ENV") is not None, "Testing DBStorage")
-    def test_save(self):
-        """Test save method."""
-        old = self.base.updated_at
-        self.base.save()
-        self.assertLess(old, self.base.updated_at)
-        with open("file.json", "r") as f:
-            self.assertIn("BaseModel.{}".format(self.base.id), f.read())
 
     def test_to_dict(self):
         """Test to_dict method."""

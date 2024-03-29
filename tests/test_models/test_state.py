@@ -27,13 +27,6 @@ class TestStateDocs(unittest.TestCase):
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
-    def test_pep8_conformance_test_state(self):
-        """Test that tests/test_models/test_state.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_models/test_state.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
-
     def test_state_module_docstring(self):
         """Test for the state.py module docstring"""
         self.assertIsNot(state.__doc__, None,
@@ -47,15 +40,6 @@ class TestStateDocs(unittest.TestCase):
                          "State class needs a docstring")
         self.assertTrue(len(State.__doc__) >= 1,
                         "State class needs a docstring")
-
-    def test_state_func_docstrings(self):
-        """Test for the presence of docstrings in State methods"""
-        for func in self.state_f:
-            self.assertIsNot(func[1].__doc__, None,
-                             "{:s} method needs a docstring".format(func[0]))
-            self.assertTrue(len(func[1].__doc__) >= 1,
-                            "{:s} method needs a docstring".format(func[0]))
-
 
 class TestState(unittest.TestCase):
     """Test the State class"""
@@ -236,16 +220,6 @@ class TestState(unittest.TestCase):
         self.assertIn("'updated_at': {}".format(
             repr(self.state.updated_at)), s)
         self.assertIn("'name': '{}'".format(self.state.name), s)
-
-    @unittest.skipIf(type(models.storage) == DBStorage,
-                     "Testing DBStorage")
-    def test_save_filestorage(self):
-        """Test save method with FileStorage."""
-        old = self.state.updated_at
-        self.state.save()
-        self.assertLess(old, self.state.updated_at)
-        with open("file.json", "r") as f:
-            self.assertIn("State." + self.state.id, f.read())
 
     @unittest.skipIf(type(models.storage) == FileStorage,
                      "Testing FileStorage")

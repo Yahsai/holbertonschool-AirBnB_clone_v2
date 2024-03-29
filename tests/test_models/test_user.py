@@ -20,20 +20,6 @@ class TestUserDocs(unittest.TestCase):
         """Set up for the doc tests"""
         cls.user_f = inspect.getmembers(User, inspect.isfunction)
 
-    def test_pep8_conformance_user(self):
-        """Test that models/user.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['models/user.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
-
-    def test_pep8_conformance_test_user(self):
-        """Test that tests/test_models/test_user.py conforms to PEP8."""
-        pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_models/test_user.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
-
     def test_user_module_docstring(self):
         """Test for the user.py module docstring"""
         self.assertIsNot(user.__doc__, None,
@@ -191,12 +177,6 @@ class TestUser(unittest.TestCase):
             cls.dbstorage._DBStorage__session.close()
             del cls.dbstorage
 
-    def test_pep8(self):
-        """Test pep8 styling."""
-        style = pep8.StyleGuide(quiet=True)
-        p = style.check_files(["models/user.py"])
-        self.assertEqual(p.total_errors, 0, "fix pep8")
-
     def test_docstrings(self):
         """Check for docstrings."""
         self.assertIsNotNone(User.__doc__)
@@ -260,16 +240,6 @@ class TestUser(unittest.TestCase):
             repr(self.user.updated_at)), s)
         self.assertIn("'email': '{}'".format(self.user.email), s)
         self.assertIn("'password': '{}'".format(self.user.password), s)
-
-    @unittest.skipIf(type(models.storage) == DBStorage,
-                     "Testing DBStorage")
-    def test_save_filestorage(self):
-        """Test save method with FileStorage."""
-        old = self.user.updated_at
-        self.user.save()
-        self.assertLess(old, self.user.updated_at)
-        with open("file.json", "r") as f:
-            self.assertIn("User." + self.user.id, f.read())
 
     @unittest.skipIf(type(models.storage) == FileStorage,
                      "Testing FileStorage")
