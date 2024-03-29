@@ -43,7 +43,7 @@ class TestReview(unittest.TestCase):
         cls.review = Review(text="stellar", place_id=cls.place.id,
                             user_id=cls.user.id)
 
-        if type(models.storage) == DBStorage:
+        if type(models.storage) is DBStorage:
             cls.dbstorage = DBStorage()
             Base.metadata.create_all(cls.dbstorage._DBStorage__engine)
             Session = sessionmaker(bind=cls.dbstorage._DBStorage__engine)
@@ -69,7 +69,7 @@ class TestReview(unittest.TestCase):
         del cls.place
         del cls.review
         del cls.filestorage
-        if type(models.storage) == DBStorage:
+        if type(models.storage) is DBStorage:
             cls.dbstorage._DBStorage__session.close()
             del cls.dbstorage
 
@@ -94,7 +94,7 @@ class TestReview(unittest.TestCase):
         self.assertTrue(hasattr(us, "place_id"))
         self.assertTrue(hasattr(us, "user_id"))
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(type(models.storage) is FileStorage,
                      "Testing FileStorage")
     def test_nullable_attributes(self):
         """Test that email attribute is non-nullable."""
@@ -148,7 +148,7 @@ class TestReview(unittest.TestCase):
         self.assertIn("'place_id': '{}'".format(self.review.place_id), s)
         self.assertIn("'user_id': '{}'".format(self.review.user_id), s)
 
-    @unittest.skipIf(type(models.storage) == FileStorage,
+    @unittest.skipIf(type(models.storage) is FileStorage,
                      "Testing FileStorage")
     def test_save_dbstorage(self):
         """Test save method with DBStorage."""

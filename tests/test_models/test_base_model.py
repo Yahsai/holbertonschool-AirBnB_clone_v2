@@ -41,6 +41,7 @@ class TestBaseModelDocs(unittest.TestCase):
         self.assertTrue(len(BaseModel.__doc__) >= 1,
                         "BaseModel class needs a docstring")
 
+
 class TestBaseModel(unittest.TestCase):
     """Test the BaseModel class"""
     def test_instantiation(self):
@@ -142,7 +143,8 @@ class TestBaseModel(unittest.TestCase):
         self.assertNotEqual(old_updated_at, new_updated_at)
         self.assertEqual(old_created_at, new_created_at)
         self.assertTrue(mock_storage.new.called)
-        self.assertTrue(mock_storage.save.called)#!/usr/bin/python3
+        self.assertTrue(mock_storage.save.called)
+
 
 class TestBaseModel(unittest.TestCase):
     """Unittests for testing the BaseModel class."""
