@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" """
+""" Unittest for Place model"""
 import unittest
 from models.place import Place
 from models.review import Review
