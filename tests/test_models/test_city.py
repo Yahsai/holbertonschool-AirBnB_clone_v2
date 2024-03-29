@@ -1,35 +1,24 @@
 #!/usr/bin/python3
 """ """
-import unittest
-import MySQLdb
+from tests.test_models.test_base_model import test_basemodel
+from models.city import City
 
-class TestMySQLCity(unittest.TestCase):
-    def setUp(self):
-        # Establecer la conexión con la base de datos de prueba
-        self.db = MySQLdb.connect(host="HBNB_MYSQL_HOST",
-                                  user="HBNB_MYSQL_USER",
-                                  passwd="HBNB_MYSQL_PWD",
-                                  db="HBNB_MYSQL_DB")
-        self.cursor = self.db.cursor()
 
-    def tearDown(self):
-        # Cerrar la conexión con la base de datos
-        self.db.close()
+class test_City(test_basemodel):
+    """ """
 
-    def test_create_city(self):
-        # Obtener el número de registros actual en la tabla cities
-        self.cursor.execute("SELECT COUNT(*) FROM cities")
-        initial_count = self.cursor.fetchone()[0]
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self.name = "City"
+        self.value = City
 
-        # Ejecutar el comando de consola para crear una nueva ciudad
-        # Por ejemplo, podrías ejecutar un comando INSERT INTO aquí
+    def test_state_id(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.state_id), str)
 
-        # Obtener el número de registros nuevamente después de ejecutar el comando
-        self.cursor.execute("SELECT COUNT(*) FROM cities")
-        final_count = self.cursor.fetchone()[0]
-
-        # Verificar si se agregó un nuevo registro
-        self.assertEqual(final_count - initial_count, 1)
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.name), str)

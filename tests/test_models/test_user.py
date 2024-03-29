@@ -1,33 +1,34 @@
-import unittest
-import MySQLdb
+#!/usr/bin/python3
+""" """
+from tests.test_models.test_base_model import test_basemodel
+from models.user import User
 
-class TestMySQLUser(unittest.TestCase):
-    def setUp(self):
-        # Establecer la conexión con la base de datos de prueba
-        self.db = MySQLdb.connect(host="HBNB_MYSQL_HOST",
-                                  user="HBNB_MYSQL_USER",
-                                  passwd="HBNB_MYSQL_PWD",
-                                  db="HBNB_MYSQL_DB")
-        self.cursor = self.db.cursor()
 
-    def tearDown(self):
-        # Cerrar la conexión con la base de datos
-        self.db.close()
+class test_User(test_basemodel):
+    """ """
 
-    def test_create_user(self):
-        # Obtener el número de registros actual en la tabla users
-        self.cursor.execute("SELECT COUNT(*) FROM users")
-        initial_count = self.cursor.fetchone()[0]
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self.name = "User"
+        self.value = User
 
-        # Ejecutar el comando de consola para crear un nuevo usuario
-        # Por ejemplo, podrías ejecutar un comando INSERT INTO aquí
+    def test_first_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.first_name), str)
 
-        # Obtener el número de registros nuevamente después de ejecutar el comando
-        self.cursor.execute("SELECT COUNT(*) FROM users")
-        final_count = self.cursor.fetchone()[0]
+    def test_last_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.last_name), str)
 
-        # Verificar si se agregó un nuevo registro
-        self.assertEqual(final_count - initial_count, 1)
+    def test_email(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.email), str)
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_password(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.password), str)
